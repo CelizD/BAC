@@ -1,0 +1,127 @@
+<!-- dashboard/templates/dashboard/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sistema de Asistencia Automatizado</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .camera-card { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            margin: 10px; 
+            border-radius: 5px;
+        }
+        .online { background-color: #d4edda; }
+        .offline { background-color: #f8d7da; }
+        .connected { background-color: #d1ecf1; }
+        button { 
+            padding: 8px 15px; 
+            margin: 5px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 3px; 
+            cursor: pointer;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Sistema de Asistencia Automatizado</h1>
+    
+    <div>
+        <h2>Configurar Cámara</h2>
+        <input type="text" id="cameraName" placeholder="Nombre del salón" value="salon_101">
+        <input type="text" id="cameraUrl" placeholder="URL de la cámara" value="http://192.168.1.100/capture">
+        <button onclick="addCamera()">Agregar Cámara</button>
+    </div>
+
+    <div>
+        <h2>Control de Detección</h2>
+        <button onclick="startAllCameras()">Iniciar Todas las Cámaras</button>
+        <button onclick="stopAllCameras()">Detener Todas</button>
+    </div>
+    
+    <div id="cameras-container">
+        <h2>Estado de las Cámaras</h2>
+        <!-- Las cámaras se cargan aquí dinámicamente -->
+    </div>
+    
+    <script>
+        // Función para agregar cámara
+        async function addCamera() {
+            const name = document.getElementById('cameraName').value;
+            const url = document.getElementById('cameraUrl').value;
+            
+            const response = await fetch('/detection/add_camera/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: name, url: url})
+            });
+            
+            const result = await response.json();
+            alert(result.status === 'added' ? 'Cámara agregada!' : 'Error: ' + result.error);
+            loadCameras();
+        }
+
+        // Función para cargar estado de cámaras
+        async function loadCameras() {
+            try {
+                const response = await fetch('/detection/attendance/');
+                const data = await response.json();
+                
+                const container = document.getElementById('cameras-container');
+                container.innerHTML = '<h2>Estado de las Cámaras</h2>';
+                
+                for (const [cameraName, cameraData] of Object.entries(data)) {
+                    const card = document.createElement('div');
+                    card.className = `camera-card ${cameraData.status}`;
+                    card.innerHTML = `
+                        <h3>${cameraName}</h3>
+                        <p>👥 Personas detectadas: <strong>${cameraData.person_count}</strong></p>
+                        <p>📊 Estado: ${cameraData.status}</p>
+                        <p>🕒 Última actualización: ${new Date(cameraData.last_update).toLocaleString()}</p>
+                        <button onclick="startCamera('${cameraName}')">Iniciar Detección</button>
+                    `;
+                    container.appendChild(card);
+                }
+            } catch (error) {
+                console.error('Error cargando cámaras:', error);
+            }
+        }
+
+        // Función para iniciar cámara específica
+        async function startCamera(cameraName) {
+            await fetch('/detection/start/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({camera_name: cameraName})
+            });
+            loadCameras();
+        }
+
+        // Función para iniciar todas las cámaras
+        async function startAllCameras() {
+            await fetch('/detection/start/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({camera_name: 'all'})
+            });
+            loadCameras();
+        }
+
+        // Función para detener todas las cámaras
+        async function stopAllCameras() {
+            // Necesitaríamos implementar un endpoint stop/
+            alert('Función de detener pendiente de implementar');
+        }
+
+        // Actualizar cada 3 segundos
+        setInterval(loadCameras, 3000);
+        
+        // Cargar al iniciar
+        loadCameras();
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+﻿# Entorno virtual
+venv/
+.env
+
+# Django
+*.pyc
+__pycache__/
+*.sqlite3
+*.log
+media/
+staticfiles/
+
+# Archivos de modelo YOLO (grandes)
+yolov8n.pt
+*.pth
+
+# IDE
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db
