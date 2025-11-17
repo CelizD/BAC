@@ -1,11 +1,22 @@
-# detection/urls.py
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('add_camera/', views.add_camera, name='add_camera'),
-    path('start/', views.start_detection, name='start_detection'),
-    path('stop/', views.stop_detection, name='stop_detection'),
-    path('remove/', views.remove_camera, name='remove_camera'),
-    path('attendance/', views.get_attendance, name='get_attendance'),
+    # Vistas HTML
+    path('web/login/', views.login_page, name='login_page'),
+    path('web/login/submit/', views.login_submit, name='login_submit'),
+    path('web/logout/', views.logout_view, name='logout'),  # Usar nuestra vista personalizada
+    path('web/dashboard/', views.dashboard, name='dashboard'),
+    path('web/cameras/add/', views.add_camera_web, name='add_camera_web'),
+    path('web/cameras/<str:camera_sanitized_name>/control/', views.control_camera_web, name='control_camera_web'),
+    path('web/cameras/<str:camera_sanitized_name>/remove/', views.remove_camera_web, name='remove_camera_web'),
+    path('web/cameras/control-all/', views.control_all_web, name='control_all_web'),
+    
+    # APIs públicas
+    path('stream/<str:camera_sanitized_name>/', views.video_feed, name='video-feed'),
+    path('health/', views.health_check, name='health-check'),
+    
+    # Root - redirige al login
+    path('', views.login_page, name='api-root'),
 ]

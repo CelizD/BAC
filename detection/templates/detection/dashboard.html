@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Sistema de Asistencia</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        .header {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            border: 1px solid #404040;
+        }
+        .welcome {
+            color: #ffffff;
+            margin: 0;
+            font-weight: 300;
+        }
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            float: right;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .card {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid #404040;
+        }
+        .card h3 {
+            color: #ffffff;
+            margin-top: 0;
+            font-weight: 400;
+            border-bottom: 1px solid #404040;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            background: #3d3d3d;
+            border: 1px solid #555;
+            border-radius: 6px;
+            box-sizing: border-box;
+            color: #ffffff;
+            font-size: 14px;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #454545;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        button.stop {
+            background: #e74c3c;
+        }
+        button.stop:hover {
+            background: #c0392b;
+        }
+        button.secondary {
+            background: #6c757d;
+        }
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        .camera-card {
+            border: 1px solid #404040;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background: #363636;
+        }
+        .camera-card h4 {
+            color: #ffffff;
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+        .camera-card p {
+            margin: 5px 0;
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+        .camera-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-running { background: #27ae60; color: white; }
+        .status-stopped { background: #e74c3c; color: white; }
+        .status-error { background: #f39c12; color: white; }
+        .status-starting { background: #3498db; color: white; }
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px solid;
+        }
+        .success { 
+            background: rgba(39, 174, 96, 0.1); 
+            color: #27ae60; 
+            border-color: rgba(39, 174, 96, 0.3); 
+        }
+        .error { 
+            background: rgba(231, 76, 60, 0.1); 
+            color: #e74c3c; 
+            border-color: rgba(231, 76, 60, 0.3); 
+        }
+        .empty-state {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+            font-style: italic;
+        }
+        .refresh-btn {
+            background: #3498db;
+            margin-left: 10px;
+        }
+        .refresh-btn:hover {
+            background: #2980b9;
+        }
+        .url-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .credentials-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        /* NUEVOS ESTILOS PARA STREAMING */
+        .stream-container {
+            margin-top: 15px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+        .stream-header {
+            background: #2d2d2d;
+            padding: 10px 15px;
+            border-bottom: 1px solid #555;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        .stream-title {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .stream-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .stream-controls button {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0;
+        }
+        .stream-frame {
+            width: 100%;
+            height: 300px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+        }
+        .stream-placeholder {
+            text-align: center;
+            color: #666;
+        }
+        .stream-placeholder i {
+            font-size: 48px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .stream-active {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .stream-error {
+            background: #2d2d2d;
+            color: #e74c3c;
+            padding: 20px;
+            text-align: center;
+        }
+        .stream-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #667eea;
+        }
+        .loading-spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fullscreen-btn {
+            background: #27ae60;
+        }
+        .fullscreen-btn:hover {
+            background: #219653;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="welcome">Bienvenido, {{ user.username }}! 👋</h1>
+        <div>
+            <button class="refresh-btn" onclick="window.location.reload()">🔄 Actualizar</button>
+            <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">🚪 Cerrar Sesión</button>
+            </form>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+
+    <!-- Mensajes -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="container">
+        <!-- Columna izquierda: Formularios -->
+        <div>
+            <!-- Agregar Cámara -->
+            <div class="card">
+                <h3>📹 Agregar Nueva Cámara</h3>
+                <form method="POST" action="{% url 'add_camera_web' %}" id="cameraForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="camera_name">Nombre de la Cámara:</label>
+                        <input type="text" id="camera_name" name="camera_name" required 
+                               placeholder="Ej: Salon 101, Entrada Principal (puedes usar espacios)">
+                    </div>
+                    <div class="form-group">
+                        <label for="stream_url">URL/IP de la Cámara:</label>
+                        <input type="text" id="stream_url" name="stream_url" required 
+                               placeholder="Ej: 192.168.100.15">
+                        <div class="url-hint">Puedes usar solo la IP o URL completa</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Credenciales de la Cámara:</label>
+                        <div class="credentials-group">
+                            <div>
+                                <label for="camera_user">Usuario:</label>
+                                <input type="text" id="camera_user" name="camera_user" 
+                                       placeholder="Ej: admin" value="admin">
+                            </div>
+                            <div>
+                                <label for="camera_password">Contraseña:</label>
+                                <input type="password" id="camera_password" name="camera_password" 
+                                       placeholder="Ej: admin123">
+                            </div>
+                        </div>
+                        <div class="url-hint">Credenciales por defecto ESP32-CAM: admin / admin123</div>
+                    </div>
+                    <button type="submit">➕ Agregar Cámara</button>
+                </form>
+            </div>
+
+            <!-- Control General -->
+            <div class="card">
+                <h3>🎮 Control General</h3>
+                <form method="POST" action="{% url 'control_all_web' %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="start">▶️ Iniciar Todas las Cámaras</button>
+                    <button type="submit" name="action" value="stop" class="stop">⏹️ Detener Todas</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Lista de Cámaras -->
+        <div>
+            <div class="card">
+                <h3>📋 Cámaras Configuradas</h3>
+                <div id="cameras-list">
+                    {% for camera in cameras %}
+                    <div class="camera-card">
+                        <h4>{{ camera.original_name }}</h4>
+                        <p><strong>URL:</strong> {{ camera.stream_url }}</p>
+                        <p><strong>Usuario:</strong> {{ camera.username|default:"admin" }}</p>
+                        <p><strong>Estado:</strong> 
+                            <span class="camera-status status-{{ camera.status }}">
+                                {{ camera.status|upper }}
+                            </span>
+                        </p>
+                        <p><strong>Personas detectadas:</strong> {{ camera.person_count }}</p>
+                        <p><strong>Última actualización:</strong> 
+                            {% if camera.last_update %}
+                                {{ camera.last_update }}
+                            {% else %}
+                                Nunca
+                            {% endif %}
+                        </p>
+                        
+                        <!-- STREAMING EN VIVO -->
+                        <div class="stream-container">
+                            <div class="stream-header">
+                                <span class="stream-title">📹 Vista en Vivo</span>
+                                <div class="stream-controls">
+                                    <button onclick="toggleStream('stream-{{ camera.sanitized_name }}')" class="secondary">
+                                        🔄 Toggle
+                                    </button>
+                                    <button onclick="fullscreenStream('stream-{{ camera.sanitized_name }}')" class="fullscreen-btn">
+                                        ⛶ Pantalla Completa
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="stream-frame" id="stream-{{ camera.sanitized_name }}">
+                                {% if camera.status == 'running' %}
+                                    <img 
+                                        src="http://{{ camera.username|default:'admin' }}:{{ camera.password|default:'admin123' }}@{{ camera.clean_url }}/stream" 
+                                        alt="Stream de {{ camera.original_name }}"
+                                        class="stream-active"
+                                        onload="this.style.display='block'"
+                                        onerror="showStreamError(this, '{{ camera.sanitized_name }}')"
+                                    >
+                                    <div class="stream-loading" id="loading-{{ camera.sanitized_name }}">
+                                        <div class="loading-spinner"></div>
+                                        <div>Cargando stream...</div>
+                                    </div>
+                                {% else %}
+                                    <div class="stream-placeholder">
+                                        <i>📹</i>
+                                        <div>Cámara {{ camera.status }}</div>
+                                        <small>Inicia la cámara para ver el stream</small>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="camera-controls">
+                            <form method="POST" action="{% url 'control_camera_web' camera.sanitized_name %}" style="display: inline;">
+                                {% csrf_token %}
+                                {% if camera.status == 'running' %}
+                                    <button type="submit" name="action" value="stop" class="stop">⏹️ Detener</button>
+                                {% else %}
+                                    <button type="submit" name="action" value="start">▶️ Iniciar</button>
+                                {% endif %}
+                            </form>
+                            
+                            <form method="POST" action="{% url 'remove_camera_web' camera.sanitized_name %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="secondary">🗑️ Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">
+                        <p>No hay cámaras configuradas.</p>
+                        <p>Agrega una cámara para comenzar el monitoreo.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Solo ocultar mensajes después de 5 segundos
+        setTimeout(function() {
+            var messages = document.querySelectorAll('.message');
+            messages.forEach(function(message) {
+                message.style.display = 'none';
+            });
+        }, 5000);
+
+        // Validación y ayuda para la URL
+        document.getElementById('cameraForm').addEventListener('submit', function(e) {
+            var streamUrl = document.getElementById('stream_url').value.trim();
+            
+            if (streamUrl) {
+                // Limpiar URL (remover http://, https://, etc.)
+                streamUrl = streamUrl.replace(/^(http|https):\/\//, '');
+                streamUrl = streamUrl.replace(/\/$/, ''); // Remover slash final
+                
+                document.getElementById('stream_url').value = streamUrl;
+            }
+        });
+
+        // Funciones para controlar el streaming
+        function toggleStream(streamId) {
+            const streamFrame = document.getElementById(streamId);
+            const img = streamFrame.querySelector('img');
+            const loading = streamFrame.querySelector('.stream-loading');
+            
+            if (img) {
+                if (img.style.display === 'none') {
+                    img.style.display = 'block';
+                    loading.style.display = 'flex';
+                    // Forzar recarga de la imagen
+                    img.src = img.src + '&t=' + new Date().getTime();
+                } else {
+                    img.style.display = 'none';
+                    loading.style.display = 'none';
+                }
+            }
+        }
+
+        function fullscreenStream(streamId) {
+            const streamFrame = document.getElementById(streamId);
+            const img = streamFrame.querySelector('img');
+            
+            if (img && img.style.display !== 'none') {
+                if (img.requestFullscreen) {
+                    img.requestFullscreen();
+                } else if (img.webkitRequestFullscreen) {
+                    img.webkitRequestFullscreen();
+                } else if (img.msRequestFullscreen) {
+                    img.msRequestFullscreen();
+                }
+            }
+        }
+
+        function showStreamError(imgElement, cameraId) {
+            const streamFrame = document.getElementById('stream-' + cameraId);
+            const loading = document.getElementById('loading-' + cameraId);
+            
+            imgElement.style.display = 'none';
+            if (loading) loading.style.display = 'none';
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'stream-error';
+            errorDiv.innerHTML = `
+                <div>❌ Error cargando stream</div>
+                <small>Verifica la conexión y credenciales</small>
+                <button onclick="retryStream('${cameraId}')" style="margin-top: 10px;">🔄 Reintentar</button>
+            `;
+            
+            streamFrame.appendChild(errorDiv);
+        }
+
+        function retryStream(cameraId) {
+            const streamFrame = document.getElementById('stream-' + cameraId);
+            const errorDiv = streamFrame.querySelector('.stream-error');
+            const img = streamFrame.querySelector('img');
+            const loading = document.getElementById('loading-' + cameraId);
+            
+            if (errorDiv) errorDiv.remove();
+            if (loading) loading.style.display = 'flex';
+            if (img) {
+                img.style.display = 'block';
+                // Forzar recarga
+                img.src = img.src.split('&t=')[0] + '&t=' + new Date().getTime();
+            }
+        }
+
+        // Auto-refresh streams cada 30 segundos para prevenir timeout
+        setInterval(function() {
+            document.querySelectorAll('.stream-active').forEach(function(img) {
+                if (img.style.display !== 'none') {
+                    const currentSrc = img.src;
+                    img.src = currentSrc.split('&t=')[0] + '&t=' + new Date().getTime();
+                }
+            });
+        }, 30000);
+
+        // Ocultar loading cuando la imagen se carga
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.stream-active').forEach(function(img) {
+                img.onload = function() {
+                    const cameraId = img.closest('.stream-frame').id.replace('stream-', '');
+                    const loading = document.getElementById('loading-' + cameraId);
+                    if (loading) loading.style.display = 'none';
+                };
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Sistema de Asistencia</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #1a1a1a;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            color: #e0e0e0;
+        }
+        .login-container {
+            background: #2d2d2d;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 320px;
+            border: 1px solid #404040;
+        }
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            background: #3d3d3d;
+            border: 1px solid #555;
+            border-radius: 6px;
+            box-sizing: border-box;
+            color: #ffffff;
+            font-size: 14px;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #454545;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        .logo {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">🎥</div>
+        <h2>Sistema de Asistencia</h2>
+        
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="POST" action="{% url 'login_submit' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required 
+                       placeholder="Ingresa tu usuario">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Ingresa tu contraseña">
+            </div>
+            
+            <button type="submit">Ingresar al Sistema</button>
+        </form>
+        
+        <div class="register-link">
+            <small>
+                Usa tus credenciales de superusuario de Django
+            </small>
+        </div>
+    </div>
+</body>
+</html>
