@@ -40,8 +40,9 @@ Sistema de control de asistencia automático usando **YOLO**, **OpenCV** y **Shi
 cam_ip_system/  
 ├── backend/ # Django Backend  
 │ ├── attendance_system/ # Configuración Django  
+│ ├── management/ # MQrabbit
+│ ├── dashboard/ # host web temp 
 │ ├── detection/ # Lógica de detección YOLO
-│ ├── dashboard/ host web temp  
 │ │ ├── yolo_detector.py  
 │ │ ├── views.py  
 │ │ └── urls.py  
@@ -51,15 +52,168 @@ cam_ip_system/
 
 
 
-## ⚡ Instalación Rápida
+## 📋 Instalación
 
-### Prerrequisitos
-- Python 3.8+
-- Node.js 18+
-- MySQL 8.0+
-- Git
+### Requisitos Previos
+- Python 3.8 o superior
+- pip actualizado
+- RabbitMQ instalado (ver sección de RabbitMQ)
 
-### 1. Clonar Repositorio
+### Paso 1: Clonar repositorio
 ```bash
 git clone https://github.com/vampel/cam_ip_system.git
-cd cam_ip_system
+cd cam_ip_system/backend
+```
+
+### Paso 2: Crear entorno virtual
+```bash
+python -m venv venv
+```
+
+### Paso 3: Activar entorno virtual
+```bash
+# Windows
+venv\Scripts\activate
+
+# Linux/Mac
+source venv/bin/activate
+```
+
+### Paso 4: Actualizar pip
+```bash
+python -m pip install --upgrade pip
+```
+
+### Paso 5: Instalar PyTorch (CPU)
+```bash
+# IMPORTANTE: Instalar PRIMERO PyTorch desde su índice oficial
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+```
+
+> **Nota:** Si tienes GPU NVIDIA y quieres usar CUDA:
+> ```bash
+> pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+> ```
+
+### Paso 6: Instalar resto de dependencias
+```bash
+pip install -r requirements.txt
+```
+
+### Paso 7: Verificar instalación
+```bash
+# Verificar PyTorch
+python -c "import torch; print(f'PyTorch: {torch.__version__}')"
+
+# Verificar YOLO
+python -c "from ultralytics import YOLO; print('YOLO: OK')"
+
+# Verificar OpenCV
+python -c "import cv2; print(f'OpenCV: {cv2.__version__}')"
+```
+
+### Paso 8: Configurar Django
+```bash
+# Crear superusuario para login
+python manage.py createsuperuser
+
+# Iniciar servidor de desarrollo
+python manage.py runserver
+```
+
+### Paso 9: Acceder al sistema
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## 🐰 Instalar RabbitMQ
+
+RabbitMQ es un servidor independiente que debe instalarse en tu sistema operativo (NO en el venv).
+
+### Windows:
+1. **Descargar e instalar Erlang:** https://www.erlang.org/downloads
+2. **Descargar e instalar RabbitMQ:** https://www.rabbitmq.com/download.html
+3. **Habilitar management plugin:**
+```cmd
+   cd "C:\Program Files\RabbitMQ Server\rabbitmq_server-x.x.x\sbin"
+   rabbitmq-plugins enable rabbitmq_management
+```
+4. **Iniciar servicio:**
+```cmd
+   net start RabbitMQ
+```
+
+### Linux (Ubuntu/Debian):
+```bash
+sudo apt-get update
+sudo apt-get install rabbitmq-server
+sudo systemctl enable rabbitmq-server
+sudo systemctl start rabbitmq-server
+sudo rabbitmq-plugins enable rabbitmq_management
+```
+
+### macOS:
+```bash
+brew install rabbitmq
+brew services start rabbitmq
+rabbitmq-plugins enable rabbitmq_management
+```
+
+### Verificar RabbitMQ:
+- **Interfaz web:** http://localhost:15672
+- **Usuario:** `guest`
+- **Contraseña:** `guest`
+
+---
+
+## 🚀 Ejecutar el Sistema Completo
+
+### Terminal 1 - Django Server
+```bash
+venv\Scripts\activate  # Windows
+source venv/bin/activate  # Linux/Mac
+python manage.py runserver
+```
+
+### Terminal 2 - RabbitMQ Consumer (Opcional)
+```bash
+venv\Scripts\activate
+python manage.py run_rabbitmq_consumer --queue detection_results
+```
+
+### Terminal 3 - Navegador
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## 🔧 Solución de Problemas
+
+### Error: "Could not find a version that satisfies the requirement torch"
+**Solución:** Asegúrate de instalar PyTorch PRIMERO y desde su índice oficial:
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+```
+
+### Error: "No module named 'ultralytics'"
+**Solución:** Instala las dependencias después de PyTorch:
+```bash
+pip install -r requirements.txt
+```
+
+### Error: RabbitMQ connection refused
+**Solución:** Verifica que RabbitMQ esté corriendo:
+```bash
+# Windows
+net start RabbitMQ
+
+# Linux
+sudo systemctl status rabbitmq-server
+```
+
+### Error: "ImportError: DLL load failed" (Windows)
+**Solución:** Instala Visual C++ Redistributable:
+https://aka.ms/vs/17/release/vc_redist.x64.exe

@@ -1,9 +1,70 @@
+# detection/camera_manager.py
 import cv2
 import threading
 import time
 from datetime import datetime
 from ultralytics import YOLO
 import numpy as np
+
+from messaging.producer import RabbitMQProducer
+
+class CameraManager:
+    def __init__(self):
+        self.cameras = {}
+        self.model = YOLO('yolov8n.pt')
+        self.lock = threading.Lock()
+        self.producer = None  # Inicializar después
+    
+    def _init_rabbitmq(self):
+        """Inicializar RabbitMQ (lazy loading)"""
+        if self.producer is None:
+            try:
+                self.producer = RabbitMQProducer()
+            except Exception as e:
+                print(f"⚠️ RabbitMQ no disponible: {e}")
+    
+    def start_camera(self, camera_id):
+        with self.lock:
+            if camera_id in self.cameras and self.cameras[camera_id]['status'] == 'stopped':
+                self._init_rabbitmq()
+                
+                self.cameras[camera_id]['status'] = 'starting'
+                thread = threading.Thread(target=self._process_stream, args=(camera_id,))
+                self.cameras[camera_id]['thread'] = thread
+                thread.start()
+                
+                # 📤 Publicar evento a RabbitMQ
+                if self.producer:
+                    self.producer.publish_camera_started(
+                        camera_id,
+                        self.cameras[camera_id]['stream_url']
+                    )
+    
+    def _process_stream(self, camera_id):
+        # ... código existente ...
+        
+        # Después de la detección YOLO, agregar:
+        with self.lock:
+            if camera_id in self.cameras:
+                self.cameras[camera_id]['person_count'] = person_count
+                self.cameras[camera_id]['last_update'] = datetime.now().isoformat()
+                
+                # 📤 Publicar resultado a RabbitMQ
+                if self.producer:
+                    occupancy_rate = (person_count / 20) * 100  # Ejemplo: 20 sillas max
+                    self.producer.publish_detection_result(
+                        camera_id,
+                        person_count,
+                        20,  # chairs (ajustar según tu lógica)
+                        occupancy_rate
+                    )
+                    
+                    # 📤 Publicar alerta si ocupación alta
+                    self.producer.publish_occupancy_alert(
+                        camera_id,
+                        occupancy_rate,
+                        threshold=80
+                    )
 
 class CameraManager:
     def __init__(self):
@@ -40,6 +101,9 @@ class CameraManager:
         with self.lock:
             if camera_id in self.cameras:
                 self.cameras[camera_id]['status'] = 'stopped'
+                thread = self.cameras[camera_id].get('thread')
+            if thread and thread.is_alive():
+                thread.join(timeout=5)
     
     def _process_stream(self, camera_id):
         camera = self.cameras[camera_id]

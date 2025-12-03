@@ -230,50 +230,21 @@ def health_check(request):
     })
 
 def video_feed(request, camera_sanitized_name):
-    """Stream de video para ESP32-CAM (maneja 1 conexión)"""
-    camera_data = None
-    for cam in request.session.get('user_cameras', []):
-        if cam.get('sanitized_name') == camera_sanitized_name:
-            camera_data = cam
-            break
-    
-    if not camera_data:
-        return JsonResponse({'error': 'Camera not found'}, status=404)
-    
+    """Stream optimizado - usa frames ya procesados"""
     def generate_frames():
-        stream_url = camera_data['stream_url']
-        
-        # Para ESP32-CAM, usar OpenCV con configuración específica
-        cap = cv2.VideoCapture(stream_url)
-        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-        cap.set(cv2.CAP_PROP_FPS, 5)  # FPS bajos para ESP32
-        
-        if not cap.isOpened():
-            # Devolver frame de error
-            error_frame = create_error_frame("No se puede conectar")
-            ret, buffer = cv2.imencode('.jpg', error_frame)
-            if ret:
-                frame_bytes = buffer.tobytes()
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-            return
-        
-        try:
-            while True:
-                success, frame = cap.read()
-                if not success:
-                    break
-                    
-                ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
-                if ret:
-                    frame_bytes = buffer.tobytes()
-                    yield (b'--frame\r\n'
-                           b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-        finally:
-            cap.release()
+        while True:
+            camera_status = camera_manager.get_camera_status(camera_sanitized_name)
+            if camera_status and 'last_frame' in camera_status:
+                frame = camera_status['last_frame']
+                if frame is not None:
+                    ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
+                    if ret:
+                        yield (b'--frame\r\n'
+                               b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+            time.sleep(0.1)  # 10 FPS
     
     return StreamingHttpResponse(
-        generate_frames(), 
+        generate_frames(),
         content_type='multipart/x-mixed-replace; boundary=frame'
     )
 

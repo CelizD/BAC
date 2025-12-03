@@ -37,7 +37,14 @@ INSTALLED_APPS = [
     # Local apps
     'detection',
     'dashboard',
+    'messaging',
 ]
+
+# Configuración RabbitMQ
+RABBITMQ_HOST = 'localhost'
+RABBITMQ_PORT = 5672
+RABBITMQ_USER = 'guest'
+RABBITMQ_PASSWORD = 'guest'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Must be first
