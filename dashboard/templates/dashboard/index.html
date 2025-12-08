@@ -1,13 +1,11 @@
-<!-- dashboard/templates/dashboard/index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Monitoreo - Dashboard</title>
+    <title>Sistema YOLO - Detección en Vivo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* RESET Y ESTILOS GLOBALES */
         * {
             margin: 0;
             padding: 0;
@@ -22,7 +20,6 @@
             padding: 20px;
         }
         
-        /* HEADER */
         .header {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -33,35 +30,37 @@
             justify-content: space-between;
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .welcome {
+            font-size: 1.8rem;
+            font-weight: 300;
         }
         
-        .logo i {
-            font-size: 2.5rem;
-            color: #4fc3f7;
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
-        .logo h1 {
-            font-size: 2rem;
+        .btn-danger {
+            background: linear-gradient(45deg, #f44336, #c62828);
+            color: white;
+        }
+        
+        .btn-primary {
             background: linear-gradient(45deg, #4fc3f7, #29b6f6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            color: white;
         }
         
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .btn-success {
+            background: linear-gradient(45deg, #4caf50, #2e7d32);
+            color: white;
         }
         
-        /* PANEL DE CONTROL */
         .control-panel {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -71,141 +70,32 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .control-panel h2 {
-            margin-bottom: 20px;
-            color: #4fc3f7;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr auto;
             gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-group label {
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #bbdefb;
         }
         
         .form-control {
-            padding: 12px 15px;
+            padding: 12px;
             border: 2px solid rgba(79, 195, 247, 0.3);
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: #4fc3f7;
-            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
-        }
-        
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #29b6f6, #0288d1);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(41, 182, 246, 0.4);
-        }
-        
-        .btn-success {
-            background: linear-gradient(45deg, #4caf50, #2e7d32);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: linear-gradient(45deg, #2e7d32, #1b5e20);
-            transform: translateY(-2px);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(45deg, #f44336, #c62828);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: linear-gradient(45deg, #c62828, #b71c1c);
-            transform: translateY(-2px);
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        /* CONTENEDOR DE CÁMARAS */
-        .cameras-container {
-            margin-top: 30px;
-        }
-        
-        .cameras-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .cameras-header h2 {
-            color: #4fc3f7;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         
         .cameras-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(650px, 1fr));
             gap: 25px;
         }
         
-        /* TARJETA DE CÁMARA - MODIFICADA PARA 2 COLUMNAS */
         .camera-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 15px;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: grid;
-            grid-template-columns: 2fr 1fr; /* 2/3 para video, 1/3 para lista */
-            grid-template-rows: auto 1fr auto; /* header, contenido, acciones */
-            min-height: 500px;
-        }
-        
-        .camera-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
         
         .camera-header {
@@ -215,13 +105,9 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            grid-column: 1 / -1; /* Ocupa ambas columnas */
         }
         
         .camera-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             font-size: 1.3rem;
             font-weight: 600;
         }
@@ -231,8 +117,6 @@
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
         
         .status-running { background: rgba(76, 175, 80, 0.2); color: #4caf50; border: 1px solid #4caf50; }
@@ -240,81 +124,330 @@
         .status-starting { background: rgba(255, 152, 0, 0.2); color: #ff9800; border: 1px solid #ff9800; }
         .status-error { background: rgba(183, 28, 28, 0.2); color: #b71c1c; border: 1px solid #b71c1c; }
         
-        /* COLUMNA IZQUIERDA - VIDEO */
-        .video-column {
-            padding: 15px;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* CONTENEDOR DE VIDEO */
         .video-container {
             position: relative;
             width: 100%;
-            flex: 1;
+            height: 400px;
             background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .video-frame {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .video-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #888;
-            background: #111;
-        }
-        
-        .video-placeholder i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-        
-        .stream-overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            gap: 10px;
-            z-index: 10;
+            object-fit: contain;
         }
         
         .person-count-badge {
-            background: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.2rem;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             backdrop-filter: blur(5px);
+            z-index: 10;
+            border: 2px solid #4caf50;
         }
         
-        .stream-controls {
+        .camera-info {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .info-label {
+            color: #bbdefb;
+        }
+        
+        .info-value {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .camera-actions {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid #4caf50;
+        }
+        
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid #f44336;
+        }
+        
+        .video-placeholder {
+            text-align: center;
+            color: #888;
+        }
+        
+        .video-placeholder i {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="welcome">🤖 Detección YOLO en Tiempo Real - Hola, {{ user.username }}!</h1>
+        <form method="POST" action="{% url 'logout_view' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </form>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                <i class="fas fa-{{ message.tags == 'success' and 'check-circle' or 'exclamation-circle' }}"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="control-panel">
+        <h2><i class="fas fa-video-plus"></i> Agregar Cámara YouTube</h2>
+        <form method="POST" action="{% url 'add_camera_web' %}">
+            {% csrf_token %}
+            <div class="form-grid">
+                <input type="text" name="camera_name" class="form-control" 
+                       placeholder="Nombre (ej: Tokyo Live)" required>
+                <input type="text" name="stream_url" class="form-control" 
+                       placeholder="URL de YouTube" 
+                       value="https://www.youtube.com/watch?v=DjdUEyjx8GM">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Agregar
+                </button>
+            </div>
+        </form>
+        
+        <div style="margin-top: 15px;">
+            <form method="POST" action="{% url 'control_all_web' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" name="action" value="start" class="btn btn-success">
+                    <i class="fas fa-play"></i> Iniciar Todas
+                </button>
+                <button type="submit" name="action" value="stop" class="btn btn-danger">
+                    <i class="fas fa-stop"></i> Detener Todas
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="cameras-grid">
+        {% for camera in cameras %}
+        <div class="camera-card" id="camera-{{ camera.sanitized_name }}">
+            <div class="camera-header">
+                <div class="camera-title">
+                    <i class="fas fa-video"></i> {{ camera.original_name }}
+                </div>
+                <span class="camera-status status-{{ camera.status }}">
+                    {{ camera.status|upper }}
+                </span>
+            </div>
+            
+            <div class="video-container">
+                {% if camera.status == 'running' %}
+                    <img src="/api/stream/{{ camera.sanitized_name }}/?t={{ camera.last_update }}" 
+                         class="video-frame" 
+                         id="frame-{{ camera.sanitized_name }}"
+                         alt="Stream {{ camera.original_name }}"
+                         onerror="handleError('{{ camera.sanitized_name }}')">
+                    
+                    <div class="person-count-badge">
+                        <i class="fas fa-users"></i>
+                        <span id="count-{{ camera.sanitized_name }}">{{ camera.person_count }}</span>
+                        <small style="font-size: 0.8rem; margin-left: 5px;">personas</small>
+                    </div>
+                {% else %}
+                    <div class="video-placeholder">
+                        <i class="fas fa-video-slash"></i>
+                        <p>Cámara {{ camera.status }}</p>
+                        {% if camera.status == 'starting' %}
+                            <p class="loading" style="margin-top: 10px;">
+                                <i class="fas fa-spinner fa-spin"></i> Conectando...
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="camera-info">
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-hashtag"></i> ID:</span>
+                    <span class="info-value">{{ camera.video_id|default:"N/A" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-users"></i> Detectadas:</span>
+                    <span class="info-value">{{ camera.person_count }} personas</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-clock"></i> Actualización:</span>
+                    <span class="info-value">{{ camera.last_update|default:"Nunca" }}</span>
+                </div>
+            </div>
+            
+            <div class="camera-actions">
+                <form method="POST" action="{% url 'control_camera_web' camera.sanitized_name %}" style="display: inline; flex: 1;">
+                    {% csrf_token %}
+                    {% if camera.status == 'running' %}
+                        <button type="submit" name="action" value="stop" class="action-btn" style="background: #f44336;">
+                            <i class="fas fa-stop"></i> Detener
+                        </button>
+                    {% else %}
+                        <button type="submit" name="action" value="start" class="action-btn" style="background: #4caf50;">
+                            <i class="fas fa-play"></i> Iniciar
+                        </button>
+                    {% endif %}
+                </form>
+                
+                <form method="POST" action="{% url 'remove_camera_web' camera.sanitized_name %}" style="display: inline; flex: 1;">
+                    {% csrf_token %}
+                    <button type="submit" class="action-btn" style="background: #ff9800;" 
+                            onclick="return confirm('¿Eliminar cámara {{ camera.original_name }}?')">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: #888;">
+            <i class="fas fa-video-slash" style="font-size: 5rem; opacity: 0.3; margin-bottom: 20px;"></i>
+            <h3>No hay cámaras configuradas</h3>
+            <p>Agrega tu primera cámara usando el formulario superior</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Auto-refresh frames cada 1 segundo para cámaras activas
+        function setupAutoRefresh() {
+            {% for camera in cameras %}
+            {% if camera.status == 'running' %}
+            setInterval(function() {
+                const img = document.getElementById('frame-{{ camera.sanitized_name }}');
+                if (img) {
+                    const timestamp = new Date().getTime();
+                    img.src = '/api/stream/{{ camera.sanitized_name }}/?t=' + timestamp;
+                }
+            }, 1000);
+            {% endif %}
+            {% endfor %}
+        }
+        
+        function handleError(cameraId) {
+            const img = document.getElementById('frame-' + cameraId);
+            if (img) {
+                img.style.opacity = '0.5';
+                setTimeout(() => {
+                    img.src = '/api/stream/' + cameraId + '/?t=' + new Date().getTime();
+                }, 3000);
+            }
+        }
+        
+        // Ocultar mensajes después de 5 segundos
+        setTimeout(function() {
+            document.querySelectorAll('.message').forEach(function(msg) {
+                msg.style.display = 'none';
+            });
+        }, 5000);
+        
+        // Auto-refresh de la página cada 5 segundos si hay cámaras en "starting"
+        {% for camera in cameras %}
+        {% if camera.status == 'starting' %}
+        setTimeout(function() {
+            window.location.reload();
+        }, 5000);
+        {% endif %}
+        {% endfor %}
+        
+        // Iniciar auto-refresh cuando cargue la página
+        document.addEventListener('DOMContentLoaded', setupAutoRefresh);
+    </script>
+</body>
+</html>
+```
+
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema YOLO - Detección en Vivo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ... (mantén todos los estilos existentes) ... */
+        
+        /* AÑADE ESTOS ESTILOS NUEVOS */
+        .view-controls {
             position: absolute;
             bottom: 10px;
             right: 10px;
             display: flex;
             gap: 10px;
-            z-index: 10;
+            z-index: 20;
         }
         
-        .stream-btn {
+        .view-btn {
             background: rgba(0, 0, 0, 0.7);
             color: white;
             border: none;
@@ -329,17 +462,21 @@
             backdrop-filter: blur(5px);
         }
         
-        .stream-btn:hover {
+        .view-btn:hover {
             background: rgba(0, 0, 0, 0.9);
             transform: scale(1.1);
         }
         
-        /* COLUMNA DERECHA - LISTA DE PERSONAS DETECTADAS */
-        .detections-column {
+        .view-btn.active {
+            background: #4fc3f7;
+        }
+        
+        .detections-panel {
+            max-height: 300px;
+            overflow-y: auto;
             padding: 15px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .detections-header {
@@ -351,182 +488,77 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .detections-header h3 {
-            color: #4fc3f7;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1.1rem;
-        }
-        
-        .detection-count {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4caf50;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid #4caf50;
-        }
-        
-        /* LISTA DE DETECCIONES */
-        .detections-list {
-            flex: 1;
-            overflow-y: auto;
-            max-height: 300px;
-            padding-right: 5px;
-        }
-        
-        .detections-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .detections-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-        }
-        
-        .detections-list::-webkit-scrollbar-thumb {
-            background: #4fc3f7;
-            border-radius: 3px;
-        }
-        
         .detection-item {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-            padding: 12px 15px;
+            padding: 12px;
             margin-bottom: 10px;
             border-left: 4px solid #4caf50;
-            animation: fadeIn 0.3s ease;
-            transition: all 0.3s;
         }
         
-        .detection-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-        
-        .detection-item.new {
+        .detection-item:nth-child(1) {
             border-left-color: #ff9800;
             animation: highlight 2s ease;
+        }
+        
+        @keyframes highlight {
+            0% { background: rgba(255, 152, 0, 0.3); }
+            100% { background: rgba(255, 255, 255, 0.05); }
         }
         
         .detection-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         
         .detection-id {
-            font-weight: 600;
+            font-weight: bold;
             color: #4fc3f7;
-            font-size: 0.9rem;
         }
         
         .detection-time {
-            font-size: 0.8rem;
-            color: #90a4ae;
+            font-size: 0.8em;
+            color: #888;
         }
         
         .detection-details {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .detail-label {
-            font-size: 0.75rem;
-            color: #bbdefb;
-        }
-        
-        .detail-value {
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 0.9em;
         }
         
         .confidence-high { color: #4caf50; }
         .confidence-medium { color: #ff9800; }
         .confidence-low { color: #f44336; }
         
-        .no-detections {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #90a4ae;
-            text-align: center;
-            padding: 20px;
+        .bbox-visual {
+            height: 4px;
+            background: linear-gradient(90deg, #4caf50, transparent);
+            margin-top: 8px;
+            border-radius: 2px;
+            position: relative;
         }
         
-        .no-detections i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.3;
+        .bbox-visual::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            width: 10px;
+            height: 10px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: slide 2s infinite;
         }
         
-        /* INFO DE CÁMARA */
-        .camera-info {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            grid-column: 1 / -1;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        @keyframes slide {
+            0% { left: 0%; }
+            50% { left: 100%; }
+            100% { left: 0%; }
         }
         
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-        
-        .info-item {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .info-label {
-            font-size: 0.85rem;
-            color: #bbdefb;
-            margin-bottom: 5px;
-        }
-        
-        .info-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: white;
-        }
-        
-        /* ACCIONES */
-        .camera-actions {
-            padding: 20px;
-            display: flex;
-            gap: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            grid-column: 1 / -1;
-        }
-        
-        .action-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        /* ESTADÍSTICAS */
+        /* Nueva sección para estadísticas */
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -559,916 +591,413 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .modal-content {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 1000px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* ANIMACIONES */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes highlight {
-            0% { background: rgba(255, 152, 0, 0.3); }
-            100% { background: rgba(255, 255, 255, 0.05); }
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        .slide-in {
-            animation: slideIn 0.3s ease;
-        }
-        
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .cameras-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .camera-card {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 300px auto auto auto;
-            }
-            
-            .video-column {
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* NOTIFICACIONES */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            z-index: 1001;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: slideIn 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .notification.success {
-            background: rgba(76, 175, 80, 0.2);
-            border-color: #4caf50;
-        }
-        
-        .notification.error {
-            background: rgba(244, 67, 54, 0.2);
-            border-color: #f44336;
-        }
-        
-        .notification.info {
-            background: rgba(33, 150, 243, 0.2);
-            border-color: #2196f3;
-        }
-        
-        /* LOADER */
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-top: 5px solid #4fc3f7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* BADGES */
-        .badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .badge-success {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4caf50;
-            border: 1px solid #4caf50;
-        }
-        
-        .badge-warning {
-            background: rgba(255, 152, 0, 0.2);
-            color: #ff9800;
-            border: 1px solid #ff9800;
-        }
-        
-        .badge-danger {
-            background: rgba(244, 67, 54, 0.2);
-            color: #f44336;
-            border: 1px solid #f44336;
-        }
-        
-        .badge-info {
-            background: rgba(33, 150, 243, 0.2);
-            color: #2196f3;
-            border: 1px solid #2196f3;
-        }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <div class="header fade-in">
-        <div class="logo">
-            <i class="fas fa-robot"></i>
-            <h1>Sistema de Monitoreo con IA</h1>
-        </div>
-        <div class="user-info">
-            <div class="user-details">
-                <div class="user-name"><i class="fas fa-user"></i> admin</div>
-                <div class="user-role">Administrador</div>
-            </div>
-            <button class="btn btn-danger" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Salir
+    <div class="header">
+        <h1 class="welcome">🤖 Detección YOLO en Tiempo Real - Hola, {{ user.username }}!</h1>
+        <form method="POST" action="{% url 'logout_view' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </button>
-        </div>
+        </form>
     </div>
 
-    <!-- PANEL DE ESTADÍSTICAS -->
-    <div class="stats-bar fade-in">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                <i class="fas fa-{{ message.tags == 'success' and 'check-circle' or 'exclamation-circle' }}"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- NUEVO: Panel de estadísticas -->
+    <div class="stats-bar">
         <div class="stat-card">
             <i class="fas fa-video"></i>
-            <div class="stat-value" id="total-cameras">0</div>
+            <div class="stat-value" id="total-cameras">{{ cameras|length }}</div>
             <div class="stat-label">Cámaras Totales</div>
         </div>
         <div class="stat-card">
             <i class="fas fa-users"></i>
-            <div class="stat-value" id="total-persons">0</div>
+            <div class="stat-value" id="total-persons">
+                {% with total=0 %}
+                    {% for camera in cameras %}
+                        {% widthratio camera.person_count 1 1 as count %}
+                        {{ count|add:total }}
+                    {% endfor %}
+                {% endwith %}
+            </div>
             <div class="stat-label">Personas Detectadas</div>
         </div>
         <div class="stat-card">
             <i class="fas fa-broadcast-tower"></i>
-            <div class="stat-value" id="active-streams">0</div>
+            <div class="stat-value" id="active-streams">
+                {% with active=0 %}
+                    {% for camera in cameras %}
+                        {% if camera.status == 'running' %}
+                            {{ active|add:1 }}
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
+            </div>
             <div class="stat-label">Streams Activos</div>
         </div>
         <div class="stat-card">
             <i class="fas fa-microchip"></i>
-            <div class="stat-value" id="system-status">OK</div>
-            <div class="stat-label">Estado del Sistema</div>
+            <div class="stat-value" id="yolo-status">ON</div>
+            <div class="stat-label">YOLO Activo</div>
         </div>
     </div>
 
-    <!-- PANEL DE CONTROL -->
-    <div class="control-panel fade-in">
-        <h2><i class="fas fa-sliders-h"></i> Control Central</h2>
-        
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="cameraName"><i class="fas fa-camera"></i> Nombre de Cámara</label>
-                <input type="text" id="cameraName" class="form-control" placeholder="Ej: Tokyo Shibuya" value="tokyo_live">
-            </div>
-            <div class="form-group">
-                <label for="cameraUrl"><i class="fas fa-link"></i> URL de YouTube</label>
-                <input type="text" id="cameraUrl" class="form-control" 
-                       placeholder="Ej: https://www.youtube.com/embed/DjdUEyjx8GM" 
-                       value="https://www.youtube.com/embed/DjdUEyjx8GM">
-            </div>
-            <div class="form-group">
-                <label>&nbsp;</label>
-                <button class="btn btn-primary" onclick="addCamera()">
-                    <i class="fas fa-plus-circle"></i> Agregar Cámara
+    <div class="control-panel">
+        <h2><i class="fas fa-video-plus"></i> Agregar Cámara YouTube</h2>
+        <form method="POST" action="{% url 'add_camera_web' %}">
+            {% csrf_token %}
+            <div class="form-grid">
+                <input type="text" name="camera_name" class="form-control" 
+                       placeholder="Nombre (ej: Tokyo Live)" required>
+                <input type="text" name="stream_url" class="form-control" 
+                       placeholder="URL de YouTube" 
+                       value="https://www.youtube.com/watch?v=DjdUEyjx8GM">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Agregar
                 </button>
             </div>
-        </div>
+        </form>
         
-        <div class="btn-group">
-            <button class="btn btn-success" onclick="startAllCameras()">
-                <i class="fas fa-play"></i> Iniciar Todas las Cámaras
-            </button>
-            <button class="btn btn-danger" onclick="stopAllCameras()">
-                <i class="fas fa-stop"></i> Detener Todas las Cámaras
-            </button>
-            <button class="btn btn-primary" onclick="refreshDashboard()">
-                <i class="fas fa-sync-alt"></i> Actualizar Dashboard
-            </button>
+        <div style="margin-top: 15px;">
+            <form method="POST" action="{% url 'control_all_web' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" name="action" value="start" class="btn btn-success">
+                    <i class="fas fa-play"></i> Iniciar Todas
+                </button>
+                <button type="submit" name="action" value="stop" class="btn btn-danger">
+                    <i class="fas fa-stop"></i> Detener Todas
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- CONTENEDOR DE CÁMARAS -->
-    <div class="cameras-container fade-in">
-        <div class="cameras-header">
-            <h2><i class="fas fa-video"></i> Cámaras en Vivo</h2>
-            <div class="cameras-count">
-                <span id="cameras-count-badge" class="camera-status status-running">0 Cámaras</span>
+    <div class="cameras-grid">
+        {% for camera in cameras %}
+        <div class="camera-card" id="camera-{{ camera.sanitized_name }}">
+            <div class="camera-header">
+                <div class="camera-title">
+                    <i class="fas fa-video"></i> {{ camera.original_name }}
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="camera-status status-{{ camera.status }}">
+                        {{ camera.status|upper }}
+                    </span>
+                    <span style="font-size: 0.8rem; color: #888;">
+                        {% if camera.video_id %}
+                            ID: {{ camera.video_id }}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="video-container">
+                {% if camera.status == 'running' %}
+                    <!-- IMAGEN CON BOUNDING BOXES -->
+                    <img src="{% url 'video-feed' camera.sanitized_name %}" 
+                         class="video-frame" 
+                         id="frame-{{ camera.sanitized_name }}"
+                         alt="Stream {{ camera.original_name }}"
+                         onerror="handleError('{{ camera.sanitized_name }}', this)">
+                    
+                    <div class="person-count-badge">
+                        <i class="fas fa-users"></i>
+                        <span id="count-{{ camera.sanitized_name }}">{{ camera.person_count }}</span>
+                        <small style="font-size: 0.8rem; margin-left: 5px;">personas</small>
+                    </div>
+                    
+                    <!-- CONTROLES DE VISTA -->
+                    <div class="view-controls">
+                        <button class="view-btn" title="Vista Original" 
+                                onclick="switchView('{{ camera.sanitized_name }}', 'normal')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="view-btn active" title="Vista con Bounding Boxes" 
+                                onclick="switchView('{{ camera.sanitized_name }}', 'boxes')">
+                            <i class="fas fa-square"></i>
+                        </button>
+                        <button class="view-btn" title="Refrescar" 
+                                onclick="refreshFrame('{{ camera.sanitized_name }}')">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="video-placeholder">
+                        <i class="fas fa-video-slash"></i>
+                        <p>Cámara {{ camera.status }}</p>
+                        {% if camera.status == 'starting' %}
+                            <p class="loading" style="margin-top: 10px;">
+                                <i class="fas fa-spinner fa-spin"></i> Conectando...
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- NUEVO: Panel de detecciones en tiempo real -->
+            <div class="detections-panel" id="detections-{{ camera.sanitized_name }}">
+                <div class="detections-header">
+                    <h4><i class="fas fa-list"></i> Detecciones Recientes</h4>
+                    <span id="detection-count-{{ camera.sanitized_name }}" 
+                          style="background: #4caf50; color: white; padding: 3px 10px; border-radius: 12px;">
+                        {{ camera.recent_detections|length|default:0 }}
+                    </span>
+                </div>
+                
+                {% if camera.recent_detections %}
+                    {% for detection in camera.recent_detections|slice:":5" %}
+                    <div class="detection-item">
+                        <div class="detection-header">
+                            <span class="detection-id">Persona #{{ forloop.counter }}</span>
+                            <span class="detection-time" title="{{ detection.timestamp }}">
+                                {% now "H:i:s" as now_time %}
+                                {{ detection.timestamp|time|default:"Recién" }}
+                            </span>
+                        </div>
+                        <div class="detection-details">
+                            <div>
+                                <small>Confianza:</small>
+                                <div class="confidence-{{ detection.confidence|default:0.8|floatformat:2|cut:'0.'|add:'0'|divisibleby:'high'|yesno:'high,medium,low' }}">
+                                    {{ detection.confidence|default:0.8|floatformat:3 }}%
+                                </div>
+                            </div>
+                            <div>
+                                <small>Posición:</small>
+                                <div>
+                                    {% if detection.position %}
+                                        ({{ detection.position.x|floatformat:0 }}, {{ detection.position.y|floatformat:0 }})
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bbox-visual"></div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 20px; color: #888;">
+                        <i class="fas fa-user-slash"></i>
+                        <p>No se han detectado personas aún</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="camera-info">
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-hashtag"></i> ID:</span>
+                    <span class="info-value">{{ camera.video_id|default:"N/A" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-users"></i> Detectadas:</span>
+                    <span class="info-value">{{ camera.person_count }} personas</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-clock"></i> Actualización:</span>
+                    <span class="info-value">{{ camera.last_update|default:"Nunca" }}</span>
+                </div>
+                {% if camera.detection_stats %}
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-chart-bar"></i> Estadísticas:</span>
+                    <span class="info-value">
+                        {{ camera.detection_stats.total_detections }} detecciones
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="camera-actions">
+                <form method="POST" action="{% url 'control_camera_web' camera.sanitized_name %}" style="display: inline; flex: 1;">
+                    {% csrf_token %}
+                    {% if camera.status == 'running' %}
+                        <button type="submit" name="action" value="stop" class="action-btn" style="background: #f44336;">
+                            <i class="fas fa-stop"></i> Detener
+                        </button>
+                    {% else %}
+                        <button type="submit" name="action" value="start" class="action-btn" style="background: #4caf50;">
+                            <i class="fas fa-play"></i> Iniciar
+                        </button>
+                    {% endif %}
+                </form>
+                
+                <!-- Botón para actualizar detecciones -->
+                <button class="action-btn" style="background: #2196f3;" 
+                        onclick="loadDetections('{{ camera.sanitized_name }}')">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+                
+                <form method="POST" action="{% url 'remove_camera_web' camera.sanitized_name %}" style="display: inline; flex: 1;">
+                    {% csrf_token %}
+                    <button type="submit" class="action-btn" style="background: #ff9800;" 
+                            onclick="return confirm('¿Eliminar cámara {{ camera.original_name }}?')">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </form>
             </div>
         </div>
-        
-        <div id="cameras-grid" class="cameras-grid">
-            <!-- Las cámaras se cargarán aquí dinámicamente -->
-            <div id="no-cameras" style="grid-column: 1 / -1; text-align: center; padding: 50px;">
-                <i class="fas fa-video-slash" style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;"></i>
-                <h3 style="color: #bbdefb; margin-bottom: 15px;">No hay cámaras activas</h3>
-                <p style="color: #90a4ae;">Agrega tu primera cámara usando el formulario superior</p>
-            </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: #888;">
+            <i class="fas fa-video-slash" style="font-size: 5rem; opacity: 0.3; margin-bottom: 20px;"></i>
+            <h3>No hay cámaras configuradas</h3>
+            <p>Agrega tu primera cámara usando el formulario superior</p>
         </div>
-    </div>
-
-    <!-- MODAL PARA VISTA AMPLIADA -->
-    <div id="cameraModal" class="modal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal()">&times;</button>
-            <div id="modal-content"></div>
-        </div>
+        {% endfor %}
     </div>
 
     <script>
-        // ==================== CONFIGURACIÓN ====================
-        const API_BASE = '/api/cameras'; // Ajusta según tus URLs de Django
-        let camerasData = [];
-        let detectionsData = {}; // Almacena detecciones por cámara
-        let refreshInterval;
-        let streamIntervals = {};
-
-        // ==================== FUNCIONES PRINCIPALES ====================
+        // Variables globales
+        let viewMode = {}; // 'normal' o 'boxes'
+        let detectionIntervals = {};
         
-        // 1. AGREGAR CÁMARA
-        async function addCamera() {
-            const name = document.getElementById('cameraName').value.trim();
-            const url = document.getElementById('cameraUrl').value.trim();
+        // Función para cambiar entre vista normal y con bounding boxes
+        function switchView(cameraId, mode) {
+            const img = document.getElementById(`frame-${cameraId}`);
+            if (!img) return;
             
-            if (!name || !url) {
-                showNotification('Por favor completa todos los campos', 'error');
-                return;
-            }
+            // Actualizar botones
+            const btns = document.querySelectorAll(`#camera-${cameraId} .view-btn`);
+            btns.forEach(btn => btn.classList.remove('active'));
             
-            showNotification('Agregando cámara...', 'info');
-            
-            try {
-                const response = await fetch(`${API_BASE}/add/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCSRFToken()
-                    },
-                    body: JSON.stringify({
-                        camera_id: name.toLowerCase().replace(/\s+/g, '_'),
-                        youtube_url: url
-                    })
-                });
-                
-                if (response.ok) {
-                    showNotification(`✅ Cámara "${name}" agregada correctamente`, 'success');
-                    loadCameras();
-                    // Limpiar formulario
-                    document.getElementById('cameraName').value = '';
-                    document.getElementById('cameraUrl').value = '';
-                } else {
-                    const error = await response.text();
-                    showNotification(`❌ Error: ${error}`, 'error');
-                }
-            } catch (error) {
-                showNotification('❌ Error de conexión con el servidor', 'error');
-                console.error('Error:', error);
+            if (mode === 'boxes') {
+                // Vista CON bounding boxes (usando la nueva API)
+                img.src = `{% url 'video-feed' 'CAMERA_ID' %}`.replace('CAMERA_ID', cameraId);
+                document.querySelector(`#camera-${cameraId} .view-btn:nth-child(2)`).classList.add('active');
+                viewMode[cameraId] = 'boxes';
+            } else {
+                // Vista SIN bounding boxes (frame original)
+                img.src = `/api/cameras/${cameraId}/frame/?t=${Date.now()}`;
+                document.querySelector(`#camera-${cameraId} .view-btn:nth-child(1)`).classList.add('active');
+                viewMode[cameraId] = 'normal';
             }
         }
-
-        // 2. CARGAR TODAS LAS CÁMARAS
-        async function loadCameras() {
+        
+        // Función para refrescar frame
+        function refreshFrame(cameraId) {
+            const img = document.getElementById(`frame-${cameraId}`);
+            if (img) {
+                const currentMode = viewMode[cameraId] || 'boxes';
+                if (currentMode === 'boxes') {
+                    img.src = `{% url 'video-feed' 'CAMERA_ID' %}`.replace('CAMERA_ID', cameraId) + `?t=${Date.now()}`;
+                } else {
+                    img.src = `/api/cameras/${cameraId}/frame/?t=${Date.now()}`;
+                }
+                
+                // Efecto visual
+                img.style.opacity = '0.7';
+                setTimeout(() => {
+                    img.style.opacity = '1';
+                }, 100);
+                
+                // También actualizar estadísticas
+                updateCameraStats(cameraId);
+            }
+        }
+        
+        // Función para cargar detecciones de una cámara
+        async function loadDetections(cameraId) {
             try {
-                const response = await fetch(`${API_BASE}/all/`);
-                if (!response.ok) throw new Error('Error al cargar cámaras');
+                const response = await fetch(`/api/cameras/${cameraId}/detections/?limit=10`);
+                if (!response.ok) throw new Error('Error al cargar detecciones');
                 
                 const data = await response.json();
-                camerasData = data.cameras || [];
+                updateDetectionsUI(cameraId, data.detections);
                 
-                updateDashboardUI();
-                updateStats();
+                // Actualizar contador
+                const countElement = document.getElementById(`count-${cameraId}`);
+                if (countElement) {
+                    countElement.textContent = data.detections.length;
+                }
                 
             } catch (error) {
-                console.error('Error cargando cámaras:', error);
-                showNotification('❌ Error al cargar las cámaras', 'error');
+                console.error(`Error cargando detecciones para ${cameraId}:`, error);
             }
         }
-
-        // 3. ACTUALIZAR INTERFAZ
-        function updateDashboardUI() {
-            const container = document.getElementById('cameras-grid');
-            const noCameras = document.getElementById('no-cameras');
+        
+        // Función para actualizar la UI de detecciones
+        function updateDetectionsUI(cameraId, detections) {
+            const container = document.getElementById(`detections-${cameraId}`);
+            if (!container) return;
             
-            if (camerasData.length === 0) {
+            const countElement = document.getElementById(`detection-count-${cameraId}`);
+            if (countElement) {
+                countElement.textContent = detections.length;
+            }
+            
+            // Si no hay detecciones
+            if (!detections || detections.length === 0) {
                 container.innerHTML = `
-                    <div id="no-cameras" style="grid-column: 1 / -1; text-align: center; padding: 50px;">
-                        <i class="fas fa-video-slash" style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;"></i>
-                        <h3 style="color: #bbdefb; margin-bottom: 15px;">No hay cámaras activas</h3>
-                        <p style="color: #90a4ae;">Agrega tu primera cámara usando el formulario superior</p>
+                    <div class="detections-header">
+                        <h4><i class="fas fa-list"></i> Detecciones Recientes</h4>
+                        <span style="background: #888; color: white; padding: 3px 10px; border-radius: 12px;">0</span>
+                    </div>
+                    <div style="text-align: center; padding: 20px; color: #888;">
+                        <i class="fas fa-user-slash"></i>
+                        <p>No se han detectado personas aún</p>
                     </div>
                 `;
                 return;
             }
             
-            // Actualizar contador
-            document.getElementById('cameras-count-badge').textContent = `${camerasData.length} Cámaras`;
+            // Generar HTML para las detecciones
+            let html = `
+                <div class="detections-header">
+                    <h4><i class="fas fa-list"></i> Detecciones Recientes</h4>
+                    <span style="background: #4caf50; color: white; padding: 3px 10px; border-radius: 12px;">
+                        ${detections.length}
+                    </span>
+                </div>
+            `;
             
-            // Generar HTML para cada cámara
-            container.innerHTML = camerasData.map(camera => {
-                const statusClass = `status-${camera.status}`;
-                let statusText = camera.status;
-                
-                switch(camera.status) {
-                    case 'running': statusText = 'EN VIVO'; break;
-                    case 'stopped': statusText = 'DETENIDA'; break;
-                    case 'starting': statusText = 'INICIANDO'; break;
-                    case 'error': statusText = 'ERROR'; break;
-                }
-                
-                const lastUpdate = camera.last_update ? 
-                    formatDateTime(camera.last_update) : 'Nunca';
-                
-                // Obtener detecciones para esta cámara
-                const cameraDetections = detectionsData[camera.id] || [];
-                
-                return `
-                <div class="camera-card fade-in" id="camera-${camera.id}">
-                    <div class="camera-header">
-                        <div class="camera-title">
-                            <i class="fas fa-video"></i>
-                            <span>${camera.name || camera.id}</span>
-                        </div>
-                        <span class="camera-status ${statusClass}">${statusText}</span>
-                    </div>
-                    
-                    <!-- COLUMNA IZQUIERDA - VIDEO -->
-                    <div class="video-column">
-                        <div class="video-container">
-                            ${camera.status === 'running' ? 
-                                `<img src="${API_BASE}/${camera.id}/frame/" 
-                                      class="video-frame" 
-                                      alt="Stream ${camera.id}"
-                                      onerror="handleStreamError('${camera.id}')">
-                                 <div class="stream-overlay">
-                                    <div class="person-count-badge">
-                                        <i class="fas fa-user"></i>
-                                        <span id="person-count-${camera.id}">${camera.person_count || 0}</span>
-                                    </div>
-                                 </div>
-                                 <div class="stream-controls">
-                                    <button class="stream-btn" onclick="refreshCameraStream('${camera.id}')" title="Refrescar">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
-                                    <button class="stream-btn" onclick="viewCameraFullscreen('${camera.id}')" title="Pantalla completa">
-                                        <i class="fas fa-expand"></i>
-                                    </button>
-                                 </div>` :
-                                `<div class="video-placeholder">
-                                    <i class="fas fa-${camera.status === 'error' ? 'exclamation-triangle' : 'video-slash'}"></i>
-                                    <p>Cámara ${camera.status}</p>
-                                    ${camera.status === 'stopped' ? 
-                                        `<button class="action-btn" style="background: #4caf50; margin-top: 15px;" 
-                                                onclick="startCamera('${camera.id}')">
-                                            <i class="fas fa-play"></i> Iniciar
-                                        </button>` : 
-                                        ''
-                                    }
-                                 </div>`
-                            }
-                        </div>
-                        
-                        <!-- INFO RÁPIDA DE VIDEO -->
-                        <div class="info-grid" style="margin-top: 10px;">
-                            <div class="info-item">
-                                <span class="info-label"><i class="fas fa-id-card"></i> ID</span>
-                                <span class="info-value">${camera.video_id || 'N/A'}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label"><i class="fas fa-tachometer-alt"></i> FPS</span>
-                                <span class="info-value">${camera.fps || 5}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- COLUMNA DERECHA - LISTA DE DETECCIONES -->
-                    <div class="detections-column">
-                        <div class="detections-header">
-                            <h3><i class="fas fa-users"></i> Personas Detectadas</h3>
-                            <span class="detection-count">${camera.person_count || 0}</span>
-                        </div>
-                        
-                        <div class="detections-list" id="detections-list-${camera.id}">
-                            ${renderDetectionsList(cameraDetections)}
-                        </div>
-                    </div>
-                    
-                    <!-- INFO DETALLADA DE CÁMARA -->
-                    <div class="camera-info">
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="info-label"><i class="fas fa-link"></i> URL</span>
-                                <span class="info-value" title="${camera.stream_url || ''}">
-                                    ${(camera.stream_url || '').substring(0, 40)}...
-                                </span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label"><i class="fas fa-clock"></i> Última Actualización</span>
-                                <span class="info-value">${lastUpdate}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- ACCIONES -->
-                    <div class="camera-actions">
-                        ${camera.status === 'running' ? 
-                            `<button class="action-btn" style="background: #f44336;" onclick="stopCamera('${camera.id}')">
-                                <i class="fas fa-stop"></i> Detener
-                            </button>` :
-                            `<button class="action-btn" style="background: #4caf50;" onclick="startCamera('${camera.id}')">
-                                <i class="fas fa-play"></i> Iniciar
-                            </button>`
-                        }
-                        <button class="action-btn" style="background: #2196f3;" onclick="viewCameraDetails('${camera.id}')">
-                            <i class="fas fa-chart-bar"></i> Detalles
-                        </button>
-                        <button class="action-btn" style="background: #ff9800;" onclick="removeCamera('${camera.id}')">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </div>
-                </div>`;
-            }).join('');
-            
-            // Configurar auto-refresh para streams activos
-            setupStreamAutoRefresh();
-            
-            // Cargar detecciones para cada cámara
-            camerasData.forEach(camera => {
-                if (camera.status === 'running') {
-                    loadCameraDetections(camera.id);
-                }
-            });
-        }
-
-        // 4. RENDERIZAR LISTA DE DETECCIONES
-        function renderDetectionsList(detections) {
-            if (!detections || detections.length === 0) {
-                return `
-                    <div class="no-detections">
-                        <i class="fas fa-user-slash"></i>
-                        <p>No se han detectado personas</p>
-                        <small>La cámara está monitoreando...</small>
-                    </div>
-                `;
-            }
-            
-            // Ordenar por tiempo (más reciente primero)
-            const sortedDetections = [...detections].sort((a, b) => 
-                new Date(b.timestamp) - new Date(a.timestamp)
-            );
-            
-            return sortedDetections.map((detection, index) => {
-                const timeAgo = getTimeAgo(detection.timestamp);
-                const confidence = detection.confidence || 0.85;
+            detections.slice(0, 5).forEach((det, index) => {
+                const timeAgo = getTimeAgo(det.timestamp);
+                const confidence = det.confidence || 0.8;
                 let confidenceClass = 'confidence-high';
                 
                 if (confidence < 0.7) confidenceClass = 'confidence-medium';
                 if (confidence < 0.5) confidenceClass = 'confidence-low';
                 
-                return `
+                html += `
                 <div class="detection-item ${index === 0 ? 'new' : ''}">
                     <div class="detection-header">
-                        <span class="detection-id">Persona #${detection.id || index + 1}</span>
-                        <span class="detection-time">${timeAgo}</span>
+                        <span class="detection-id">Persona #${index + 1}</span>
+                        <span class="detection-time" title="${det.timestamp}">${timeAgo}</span>
                     </div>
                     <div class="detection-details">
-                        <div class="detail-item">
-                            <span class="detail-label">Confianza</span>
-                            <span class="detail-value ${confidenceClass}">
+                        <div>
+                            <small>Confianza:</small>
+                            <div class="${confidenceClass}">
                                 ${(confidence * 100).toFixed(1)}%
-                            </span>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Área</span>
-                            <span class="detail-value">
-                                ${detection.area ? `${detection.area}px²` : 'N/A'}
-                            </span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Posición X</span>
-                            <span class="detail-value">
-                                ${detection.x ? detection.x.toFixed(0) : 'N/A'}
-                            </span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Posición Y</span>
-                            <span class="detail-value">
-                                ${detection.y ? detection.y.toFixed(0) : 'N/A'}
-                            </span>
+                        <div>
+                            <small>Posición:</small>
+                            <div>
+                                ${det.position ? 
+                                    `(${det.position.x.toFixed(0)}, ${det.position.y.toFixed(0)})` : 
+                                    'N/A'}
+                            </div>
                         </div>
                     </div>
+                    <div class="bbox-visual"></div>
                 </div>`;
-            }).join('');
-        }
-
-        // 5. CARGAR DETECCIONES DE UNA CÁMARA
-        async function loadCameraDetections(cameraId) {
-            try {
-                // En tu backend, necesitarás un endpoint como /api/cameras/{id}/detections/
-                const response = await fetch(`${API_BASE}/${cameraId}/detections/`);
-                if (response.ok) {
-                    const data = await response.json();
-                    detectionsData[cameraId] = data.detections || [];
-                    
-                    // Actualizar la lista en la interfaz
-                    const detectionsList = document.getElementById(`detections-list-${cameraId}`);
-                    if (detectionsList) {
-                        detectionsList.innerHTML = renderDetectionsList(detectionsData[cameraId]);
-                    }
-                }
-            } catch (error) {
-                console.error(`Error cargando detecciones para ${cameraId}:`, error);
-                
-                // Datos de ejemplo (simulados) para pruebas
-                if (!detectionsData[cameraId]) {
-                    const mockDetections = generateMockDetections(cameraId);
-                    detectionsData[cameraId] = mockDetections;
-                    
-                    const detectionsList = document.getElementById(`detections-list-${cameraId}`);
-                    if (detectionsList) {
-                        detectionsList.innerHTML = renderDetectionsList(mockDetections);
-                    }
-                }
-            }
-        }
-
-        // 6. GENERAR DETECCIONES DE EJEMPLO (para pruebas)
-        function generateMockDetections(cameraId) {
-            const detections = [];
-            const now = new Date();
-            const baseCount = Math.floor(Math.random() * 5) + 1;
-            
-            for (let i = 0; i < baseCount; i++) {
-                const timestamp = new Date(now.getTime() - i * 60000); // 1 minuto atrás
-                detections.push({
-                    id: `det_${cameraId}_${i}`,
-                    timestamp: timestamp.toISOString(),
-                    confidence: 0.7 + Math.random() * 0.3, // 0.7-1.0
-                    area: 5000 + Math.random() * 15000,
-                    x: Math.random() * 640,
-                    y: Math.random() * 360,
-                    width: 50 + Math.random() * 100,
-                    height: 100 + Math.random() * 100
-                });
-            }
-            
-            return detections;
-        }
-
-        // 7. AGREGAR NUEVA DETECCIÓN (simulado para pruebas)
-        function addMockDetection(cameraId) {
-            if (!detectionsData[cameraId]) {
-                detectionsData[cameraId] = [];
-            }
-            
-            const newDetection = {
-                id: `det_${cameraId}_${Date.now()}`,
-                timestamp: new Date().toISOString(),
-                confidence: 0.8 + Math.random() * 0.2,
-                area: 8000 + Math.random() * 12000,
-                x: Math.random() * 640,
-                y: Math.random() * 360
-            };
-            
-            detectionsData[cameraId].unshift(newDetection);
-            
-            // Mantener máximo 10 detecciones
-            if (detectionsData[cameraId].length > 10) {
-                detectionsData[cameraId].pop();
-            }
-            
-            // Actualizar la lista
-            const detectionsList = document.getElementById(`detections-list-${cameraId}`);
-            if (detectionsList) {
-                detectionsList.innerHTML = renderDetectionsList(detectionsData[cameraId]);
-            }
-            
-            // Actualizar contador
-            const personCount = document.getElementById(`person-count-${cameraId}`);
-            if (personCount) {
-                personCount.textContent = detectionsData[cameraId].length;
-            }
-        }
-
-        // 8. ACTUALIZAR ESTADÍSTICAS
-        function updateStats() {
-            let totalPersons = 0;
-            let activeStreams = 0;
-            let totalDetections = 0;
-            
-            camerasData.forEach(camera => {
-                totalPersons += camera.person_count || 0;
-                if (camera.status === 'running') activeStreams++;
-                
-                const cameraDetections = detectionsData[camera.id];
-                if (cameraDetections) {
-                    totalDetections += cameraDetections.length;
-                }
             });
             
-            document.getElementById('total-cameras').textContent = camerasData.length;
-            document.getElementById('total-persons').textContent = totalPersons;
-            document.getElementById('active-streams').textContent = activeStreams;
-            document.getElementById('system-status').textContent = activeStreams > 0 ? 'ACTIVO' : 'INACTIVO';
-        }
-
-        // ==================== FUNCIONES DE CONTROL ====================
-        
-        async function startCamera(cameraId) {
-            try {
-                showNotification(`Iniciando cámara ${cameraId}...`, 'info');
-                const response = await fetch(`${API_BASE}/${cameraId}/start/`, {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': getCSRFToken() }
-                });
-                
-                if (response.ok) {
-                    showNotification(`▶️ Cámara ${cameraId} iniciada`, 'success');
-                    setTimeout(() => {
-                        loadCameras();
-                        // Iniciar monitoreo de detecciones
-                        startDetectionMonitoring(cameraId);
-                    }, 1000);
-                }
-            } catch (error) {
-                showNotification('❌ Error al iniciar cámara', 'error');
-            }
-        }
-
-        async function stopCamera(cameraId) {
-            try {
-                const response = await fetch(`${API_BASE}/${cameraId}/stop/`, {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': getCSRFToken() }
-                });
-                
-                if (response.ok) {
-                    showNotification(`⏹️ Cámara ${cameraId} detenida`, 'success');
-                    // Detener monitoreo
-                    stopDetectionMonitoring(cameraId);
-                    setTimeout(loadCameras, 1000);
-                }
-            } catch (error) {
-                showNotification('❌ Error al detener cámara', 'error');
-            }
-        }
-
-        async function startAllCameras() {
-            try {
-                showNotification('Iniciando todas las cámaras...', 'info');
-                for (const camera of camerasData) {
-                    if (camera.status !== 'running') {
-                        await fetch(`${API_BASE}/${camera.id}/start/`, {
-                            method: 'POST',
-                            headers: { 'X-CSRFToken': getCSRFToken() }
-                        });
-                    }
-                }
-                showNotification('✅ Todas las cámaras iniciadas', 'success');
-                setTimeout(() => {
-                    loadCameras();
-                    // Iniciar monitoreo para todas
-                    camerasData.forEach(camera => {
-                        if (camera.status === 'running') {
-                            startDetectionMonitoring(camera.id);
-                        }
-                    });
-                }, 2000);
-            } catch (error) {
-                showNotification('❌ Error al iniciar cámaras', 'error');
-            }
-        }
-
-        async function stopAllCameras() {
-            try {
-                showNotification('Deteniendo todas las cámaras...', 'info');
-                for (const camera of camerasData) {
-                    if (camera.status === 'running') {
-                        await fetch(`${API_BASE}/${camera.id}/stop/`, {
-                            method: 'POST',
-                            headers: { 'X-CSRFToken': getCSRFToken() }
-                        });
-                        // Detener monitoreo
-                        stopDetectionMonitoring(camera.id);
-                    }
-                }
-                showNotification('⏹️ Todas las cámaras detenidas', 'success');
-                setTimeout(loadCameras, 2000);
-            } catch (error) {
-                showNotification('❌ Error al detener cámaras', 'error');
-            }
-        }
-
-        async function removeCamera(cameraId) {
-            if (!confirm(`¿Estás seguro de eliminar la cámara ${cameraId}?`)) return;
-            
-            try {
-                // Detener monitoreo primero
-                stopDetectionMonitoring(cameraId);
-                
-                const response = await fetch(`${API_BASE}/${cameraId}/remove/`, {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': getCSRFToken() }
-                });
-                
-                if (response.ok) {
-                    showNotification(`🗑️ Cámara ${cameraId} eliminada`, 'success');
-                    loadCameras();
-                }
-            } catch (error) {
-                showNotification('❌ Error al eliminar cámara', 'error');
-            }
-        }
-
-        // ==================== MONITOREO DE DETECCIONES ====================
-        
-        const detectionIntervals = {};
-        
-        function startDetectionMonitoring(cameraId) {
-            // Cargar detecciones iniciales
-            loadCameraDetections(cameraId);
-            
-            // Configurar actualización periódica
-            detectionIntervals[cameraId] = setInterval(() => {
-                // Simular nueva detección (para pruebas)
-                if (Math.random() > 0.7) { // 30% de probabilidad
-                    addMockDetection(cameraId);
-                    updateStats();
-                }
-                
-                // Actualizar desde backend (descomentar cuando tengas el endpoint)
-                // loadCameraDetections(cameraId);
-            }, 5000); // Cada 5 segundos
+            container.innerHTML = html;
         }
         
-        function stopDetectionMonitoring(cameraId) {
-            if (detectionIntervals[cameraId]) {
-                clearInterval(detectionIntervals[cameraId]);
-                delete detectionIntervals[cameraId];
-            }
-        }
-
-        // ==================== FUNCIONES DE STREAM ====================
-        
-        function setupStreamAutoRefresh() {
-            // Limpiar intervalos anteriores
-            Object.values(streamIntervals).forEach(clearInterval);
-            streamIntervals = {};
-            
-            // Configurar auto-refresh para cámaras activas
-            camerasData.forEach(camera => {
-                if (camera.status === 'running') {
-                    // Actualizar imagen cada 2 segundos
-                    streamIntervals[camera.id] = setInterval(() => {
-                        refreshCameraStream(camera.id);
-                    }, 2000);
-                    
-                    // Actualizar estadísticas cada 5 segundos
-                    setInterval(() => {
-                        updateCameraStats(camera.id);
-                    }, 5000);
-                }
-            });
-        }
-
-        function refreshCameraStream(cameraId) {
-            const img = document.querySelector(`#camera-${cameraId} .video-frame`);
-            if (img) {
-                // Agregar timestamp para evitar cache
-                const timestamp = new Date().getTime();
-                img.src = `${API_BASE}/${cameraId}/frame/?t=${timestamp}`;
-                
-                // Efecto visual
-                img.style.opacity = '0.8';
-                setTimeout(() => {
-                    img.style.opacity = '1';
-                }, 50);
-            }
-        }
-
-        function handleStreamError(cameraId) {
-            const img = document.querySelector(`#camera-${cameraId} .video-frame`);
-            if (img) {
-                img.style.opacity = '0.5';
-                // Reintentar después de 3 segundos
-                setTimeout(() => {
-                    refreshCameraStream(cameraId);
-                }, 3000);
-            }
-        }
-
-        async function updateCameraStats(cameraId) {
-            try {
-                const response = await fetch(`${API_BASE}/${cameraId}/status/`);
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Actualizar contador de personas
-                    const personCount = document.getElementById(`person-count-${cameraId}`);
-                    if (personCount) {
-                        personCount.textContent = data.person_count || 0;
-                    }
-                    
-                    // Actualizar estado si cambió
-                    const cameraCard = document.getElementById(`camera-${cameraId}`);
-                    if (cameraCard && data.status) {
-                        const statusElement = cameraCard.querySelector('.camera-status');
-                        if (statusElement) {
-                            statusElement.className = `camera-status status-${data.status}`;
-                            statusElement.textContent = data.status.toUpperCase();
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error(`Error actualizando stats para ${cameraId}:`, error);
-            }
-        }
-
-        // ==================== FUNCIONES AUXILIARES ====================
-        
+        // Función para calcular "hace X tiempo"
         function getTimeAgo(timestamp) {
+            if (!timestamp) return 'Recién';
+            
             const now = new Date();
             const past = new Date(timestamp);
             const diffMs = now - past;
@@ -1482,157 +1011,87 @@
             return past.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
         }
         
-        function formatDateTime(dateTimeString) {
-            if (!dateTimeString) return 'Nunca';
-            const date = new Date(dateTimeString);
-            return date.toLocaleString('es-ES');
-        }
-        
-        function getCSRFToken() {
-            const name = 'csrftoken';
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+        // Función para actualizar estadísticas de cámara
+        async function updateCameraStats(cameraId) {
+            try {
+                const response = await fetch(`/api/cameras/${cameraId}/status/`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Actualizar contador de personas
+                    const countElement = document.getElementById(`count-${cameraId}`);
+                    if (countElement) {
+                        countElement.textContent = data.person_count || 0;
+                    }
+                    
+                    // Actualizar estado
+                    const statusElement = document.querySelector(`#camera-${cameraId} .camera-status`);
+                    if (statusElement && data.status) {
+                        statusElement.className = `camera-status status-${data.status}`;
+                        statusElement.textContent = data.status.toUpperCase();
                     }
                 }
+            } catch (error) {
+                console.error(`Error actualizando stats para ${cameraId}:`, error);
             }
-            return cookieValue;
         }
         
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            `;
+        // Función para manejar errores de imagen
+        function handleError(cameraId, img) {
+            if (img) {
+                img.style.opacity = '0.5';
+                setTimeout(() => {
+                    refreshFrame(cameraId);
+                    img.style.opacity = '1';
+                }, 3000);
+            }
+        }
+        
+        // Configurar auto-refresh
+        function setupAutoRefresh() {
+            {% for camera in cameras %}
+            {% if camera.status == 'running' %}
+            // Auto-refresh del frame cada 1 segundo
+            setInterval(() => refreshFrame('{{ camera.sanitized_name }}'), 1000);
             
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideIn 0.3s ease reverse';
-                setTimeout(() => notification.remove(), 300);
+            // Auto-refresh de detecciones cada 3 segundos
+            detectionIntervals['{{ camera.sanitized_name }}'] = setInterval(() => {
+                loadDetections('{{ camera.sanitized_name }}');
             }, 3000);
+            {% endif %}
+            {% endfor %}
         }
         
-        function logout() {
-            if (confirm('¿Estás seguro de que deseas salir?')) {
-                window.location.href = '/logout/';
-            }
-        }
-        
-        function refreshDashboard() {
-            loadCameras();
-            showNotification('🔄 Actualizando dashboard...', 'info');
-        }
-
-        // ==================== INICIALIZACIÓN ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Dashboard inicializado con lista de detecciones');
-            
-            // Cargar cámaras al inicio
-            loadCameras();
-            
-            // Configurar auto-refresh global cada 10 segundos
-            refreshInterval = setInterval(loadCameras, 10000);
-            
-            // Configurar evento para cerrar modal con ESC
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeModal();
-                }
+        // Ocultar mensajes después de 5 segundos
+        setTimeout(() => {
+            document.querySelectorAll('.message').forEach(msg => {
+                msg.style.display = 'none';
             });
+        }, 5000);
+        
+        // Iniciar cuando cargue la página
+        document.addEventListener('DOMContentLoaded', () => {
+            setupAutoRefresh();
+            
+            // Configurar vista por defecto con bounding boxes
+            {% for camera in cameras %}
+            {% if camera.status == 'running' %}
+            switchView('{{ camera.sanitized_name }}', 'boxes');
+            {% endif %}
+            {% endfor %}
+            
+            // Auto-refresh de la página cada 10 segundos para cámaras starting
+            {% for camera in cameras %}
+            {% if camera.status == 'starting' %}
+            setTimeout(() => window.location.reload(), 10000);
+            {% endif %}
+            {% endfor %}
         });
-
+        
         // Limpiar intervalos al salir
-        window.addEventListener('beforeunload', function() {
-            clearInterval(refreshInterval);
-            Object.values(streamIntervals).forEach(clearInterval);
+        window.addEventListener('beforeunload', () => {
             Object.values(detectionIntervals).forEach(clearInterval);
         });
-
-        // Función para cerrar modal (necesita ser global)
-        window.closeModal = function() {
-            document.getElementById('cameraModal').style.display = 'none';
-        };
-
-        // Función para vista en pantalla completa
-        window.viewCameraFullscreen = function(cameraId) {
-            const camera = camerasData.find(c => c.id === cameraId);
-            if (!camera) return;
-            
-            const modal = document.getElementById('cameraModal');
-            const modalContent = document.getElementById('modal-content');
-            
-            modalContent.innerHTML = `
-                <div class="modal-video">
-                    <img src="${API_BASE}/${cameraId}/frame/" 
-                         alt="Stream ${cameraId}"
-                         style="width: 100%; height: 100%; object-fit: contain;">
-                </div>
-                <div style="padding: 20px;">
-                    <h2 style="color: #4fc3f7; margin-bottom: 15px;">
-                        <i class="fas fa-video"></i> ${camera.name || cameraId}
-                    </h2>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
-                            <div style="font-size: 0.9rem; color: #bbdefb;">Personas Detectadas</div>
-                            <div style="font-size: 2rem; font-weight: bold; color: #4caf50;">${camera.person_count || 0}</div>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
-                            <div style="font-size: 0.9rem; color: #bbdefb;">Estado</div>
-                            <div style="font-size: 1.2rem; font-weight: bold; color: #4fc3f7;">${camera.status}</div>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
-                            <div style="font-size: 0.9rem; color: #bbdefb;">Última Actualización</div>
-                            <div style="font-size: 1rem; font-weight: bold;">${formatDateTime(camera.last_update)}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            modal.style.display = 'flex';
-            
-            // Auto-refresh en modal
-            const modalInterval = setInterval(() => {
-                const img = modalContent.querySelector('img');
-                if (img) {
-                    img.src = `${API_BASE}/${cameraId}/frame/?t=${Date.now()}`;
-                }
-            }, 2000);
-            
-            // Limpiar al cerrar
-            window.closeModal = function() {
-                clearInterval(modalInterval);
-                modal.style.display = 'none';
-            };
-        };
-
-        // Función para ver detalles
-        window.viewCameraDetails = function(cameraId) {
-            const camera = camerasData.find(c => c.id === cameraId);
-            if (!camera) return;
-            
-            const detections = detectionsData[cameraId] || [];
-            
-            alert(`📊 Detalles de cámara ${cameraId}:\n\n` +
-                  `Nombre: ${camera.name || cameraId}\n` +
-                  `Estado: ${camera.status}\n` +
-                  `Personas detectadas: ${camera.person_count || 0}\n` +
-                  `Detecciones registradas: ${detections.length}\n` +
-                  `Video ID: ${camera.video_id || 'N/A'}\n` +
-                  `Última actualización: ${formatDateTime(camera.last_update)}\n` +
-                  `URL: ${camera.stream_url || 'N/A'}\n\n` +
-                  `📈 Últimas detecciones:\n` +
-                  detections.slice(0, 3).map(d => 
-                    `• ${getTimeAgo(d.timestamp)} - ${(d.confidence * 100).toFixed(1)}% confianza`
-                  ).join('\n'));
-        };
     </script>
 </body>
 </html>

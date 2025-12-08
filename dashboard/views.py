@@ -1,4 +1,4 @@
-# views.py
+# dashboard/views.py - VERSIÓN SIN EMULACIÓN
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
@@ -8,32 +8,24 @@ from detection.camera_manager import camera_manager
 
 @csrf_exempt
 def camera_detections_view(request, camera_id):
-    """Obtener lista de detecciones de una cámara"""
+    """
+    Obtener lista de detecciones REALES de una cámara
+    ⚠️ SIN DATOS SIMULADOS
+    """
     try:
-        # Aquí obtienes las detecciones reales de tu CameraManager
-        # Por ahora devolvemos datos de ejemplo
-        import random
-        from datetime import datetime, timedelta
+        # Obtener detecciones REALES del CameraManager
+        detections = camera_manager.get_camera_detections(camera_id, limit=20)
         
-        detections = []
-        now = datetime.now()
-        
-        for i in range(random.randint(1, 8)):
-            detections.append({
-                'id': f'det_{camera_id}_{i}',
-                'timestamp': (now - timedelta(minutes=random.randint(1, 30))).isoformat(),
-                'confidence': round(0.6 + random.random() * 0.4, 3),
-                'area': random.randint(5000, 20000),
-                'x': random.randint(0, 640),
-                'y': random.randint(0, 360),
-                'width': random.randint(40, 120),
-                'height': random.randint(80, 200)
-            })
+        # Obtener estadísticas REALES
+        stats = camera_manager.get_detection_statistics(camera_id)
         
         return JsonResponse({
             'camera_id': camera_id,
-            'detections': detections,
-            'count': len(detections)
+            'detections': detections,  # ← SOLO detecciones reales de YOLO
+            'count': len(detections),
+            'statistics': stats,
+            'yolo_enabled': stats.get('yolo_enabled', False),
+            'message': 'Detecciones REALES' if stats.get('yolo_enabled') else 'YOLO no disponible - instalar ultralytics'
         })
         
     except Exception as e:
@@ -86,18 +78,16 @@ def camera_status_view(request, camera_id):
     return JsonResponse({'error': 'Cámara no encontrada'}, status=404)
 
 def camera_frame_view(request, camera_id):
-    frame_data = camera_manager.get_camera_frame(camera_id)
+    """Retorna frame REAL de la cámara (con o sin bounding boxes)"""
+    with_boxes = request.GET.get('boxes', 'true').lower() == 'true'
+    
+    frame_data = camera_manager.get_camera_frame(camera_id, with_boxes=with_boxes)
+    
     if frame_data:
         return HttpResponse(frame_data, content_type='image/jpeg')
     
-    # Imagen por defecto
-    import cv2
-    import numpy as np
-    default_frame = np.zeros((360, 640, 3), dtype=np.uint8)
-    cv2.putText(default_frame, f'Camera: {camera_id}', (50, 180), 
-               cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-    _, buffer = cv2.imencode('.jpg', default_frame)
-    return HttpResponse(buffer.tobytes(), content_type='image/jpeg')
+    # Si no hay frame, retornar error (NO imagen placeholder)
+    return HttpResponse(status=404)
 
 @csrf_exempt
 def remove_camera_view(request, camera_id):
@@ -107,8 +97,12 @@ def remove_camera_view(request, camera_id):
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 def all_cameras_view(request):
+    """Lista de todas las cámaras con información REAL"""
     cameras = camera_manager.get_cameras_info()
-    return JsonResponse({'cameras': cameras})
+    return JsonResponse({
+        'cameras': cameras,
+        'total': len(cameras)
+    })
 
 def dashboard_view(request):
     return render(request, 'dashboard/index.html')

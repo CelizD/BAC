@@ -19,11 +19,16 @@ urlpatterns = [
     path('web/cameras/<str:camera_sanitized_name>/remove/', views.remove_camera_web, name='remove_camera_web'),
     path('web/cameras/control-all/', views.control_all_web, name='control_all_web'),
     
-    # ==================== APIs públicas (EXISTENTES) ====================
+    # ==================== STREAMS DE VIDEO ====================
+    # Stream CON bounding boxes (YOLO)
     path('stream/<str:camera_sanitized_name>/', views.video_feed, name='video-feed'),
+    # Stream SIN bounding boxes (original)
+    path('stream/<str:camera_sanitized_name>/original/', views.video_feed_original, name='video-feed-original'),
+    
+    # ==================== APIs públicas ====================
     path('health/', views.health_check, name='health-check'),
     
-    # ==================== NUEVAS APIs para YOLO y bounding boxes ====================
+    # ==================== APIs para YOLO y bounding boxes ====================
     
     # APIs para listar y gestionar cámaras
     path('api/cameras/all/', views.all_cameras_api, name='all_cameras_api'),
@@ -32,16 +37,16 @@ urlpatterns = [
     path('api/cameras/<str:camera_id>/stop/', views.stop_camera_api, name='stop_camera_api'),
     path('api/cameras/<str:camera_id>/remove/', views.remove_camera_api, name='remove_camera_api'),
     
-    # APIs para obtener frames (con y sin bounding boxes)
-    path('api/cameras/<str:camera_sanitized_name>/frame/', views.camera_frame_api, name='camera_frame_api'),
-    path('api/cameras/<str:camera_sanitized_name>/frame/with_boxes/', 
-         lambda request, camera_sanitized_name: views.camera_frame_api(request, camera_sanitized_name, boxes=True), 
-         name='camera_frame_with_boxes'),
+    # APIs para obtener frames estáticos (una sola imagen)
+    path('api/cameras/<str:camera_id>/frame/', views.camera_frame_api, name='camera_frame_api'),
+    # URL separada para frame con bounding boxes
+    path('api/cameras/<str:camera_id>/frame-with-boxes/', 
+         views.camera_frame_with_boxes_api, name='camera_frame_with_boxes_api'),
     
     # APIs para detecciones YOLO
-    path('api/cameras/<str:camera_sanitized_name>/detections/', 
+    path('api/cameras/<str:camera_id>/detections/', 
          views.camera_detections_api, name='camera_detections_api'),
-    path('api/cameras/<str:camera_sanitized_name>/status/', 
+    path('api/cameras/<str:camera_id>/status/', 
          views.camera_status_api, name='camera_status_api'),
     
     # Vista especial para pruebas YOLO
